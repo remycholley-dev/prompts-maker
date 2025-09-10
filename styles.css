@@ -60,7 +60,6 @@ main {
     background: var(--white);
     border-radius: var(--radius);
     padding: 2.5rem;
-    box-shadow: var(--shadow-lg);
     animation: fadeInUp 0.8s ease 0.2s both;
 }
 
@@ -78,7 +77,6 @@ main {
     border-radius: var(--radius);
     padding: 1.5rem;
     border: 1px solid #e5e7eb;
-    max-height: 85vh;
     overflow-y: auto;
 }
 
@@ -158,6 +156,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    padding: 0;
 }
 
 /* Zone de drop */
@@ -325,7 +324,6 @@ main {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0.4rem;
-    max-height: 350px;
     overflow-y: auto;
 }
 
