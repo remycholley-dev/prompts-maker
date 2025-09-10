@@ -655,7 +655,8 @@ class PromptGenerator {
             </main>
         `;
         
-        document.querySelector('.container').appendChild(savesPage);
+        const footer = document.querySelector('footer');
+        document.querySelector('.container').insertBefore(savesPage, footer);
     }
 
     renderSavesPage() {
