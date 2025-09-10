@@ -71,6 +71,62 @@ class PromptGenerator {
                 task: "Conçois une interface utilisateur moderne et engageante",
                 constraints: "Design minimaliste, palette de couleurs énergique, accessible WCAG AA",
                 examples: "Dashboard de progression, écrans d'exercices, système de gamification"
+            },
+            education: {
+                role: "Expert pédagogique avec 15 ans d'expérience en formation",
+                context: "Je dois créer un module de formation sur la cybersécurité pour des employés non-techniques",
+                task: "Développe un cours interactif de 2 heures avec exercices pratiques",
+                constraints: "Langage accessible, exemples concrets, évaluations intégrées",
+                examples: "Cas d'usage réels, quiz interactifs, simulations d'attaques"
+            },
+            research: {
+                role: "Chercheur senior spécialisé en intelligence économique",
+                context: "Étude de marché pour le lancement d'une startup dans la fintech",
+                task: "Analyse approfondie du secteur des paiements mobiles en Europe",
+                constraints: "Sources fiables, données chiffrées récentes, analyse SWOT complète",
+                examples: "Étude concurrentielle, taille de marché, tendances réglementaires"
+            },
+            business: {
+                role: "Consultant en stratégie d'entreprise avec expertise startup",
+                context: "Startup B2B SaaS en recherche de financement série A",
+                task: "Création d'un business plan complet pour lever 5M€",
+                constraints: "Format investisseur, projections financières 5 ans, go-to-market détaillé",
+                examples: "Modèle économique, stratégie d'acquisition client, roadmap produit"
+            },
+            content: {
+                role: "Content manager expert en social media et storytelling",
+                context: "Campagne de lancement produit pour une marque lifestyle",
+                task: "Stratégie de contenu multi-plateforme pour 3 mois",
+                constraints: "Calendrier éditorial, formats adaptés par plateforme, engagement communauté",
+                examples: "Posts Instagram, threads Twitter, vidéos TikTok, newsletter"
+            },
+            legal: {
+                role: "Juriste spécialisé en droit numérique et RGPD",
+                context: "Application mobile collectant des données utilisateurs en Europe",
+                task: "Rédaction d'une politique de confidentialité conforme RGPD",
+                constraints: "Langage clair, conformité légale, transparence maximale",
+                examples: "Gestion cookies, droits utilisateurs, transferts internationaux"
+            },
+            health: {
+                role: "Nutritionniste certifiée avec expertise en nutrition sportive",
+                context: "Accompagnement d'un athlète amateur préparant un marathon",
+                task: "Plan nutritionnel personnalisé pour optimiser les performances",
+                constraints: "Scientifiquement fondé, pratique au quotidien, budget raisonnable",
+                examples: "Planification repas, suppléments, hydratation, récupération"
+            },
+            environment: {
+                role: "Expert en développement durable et RSE",
+                context: "PME industrielle souhaitant réduire son impact environnemental",
+                task: "Audit environnemental et plan d'action sur 3 ans",
+                constraints: "ROI démontré, conformité réglementaire, mesures concrètes",
+                examples: "Réduction CO2, gestion déchets, économies d'énergie, certifications"
+            },
+            tech: {
+                role: "Architecte solution cloud avec expertise DevOps",
+                context: "Migration d'une application legacy vers une architecture microservices",
+                task: "Conception de l'architecture cible et plan de migration",
+                constraints: "Zero downtime, scalabilité, sécurité, coûts optimisés",
+                examples: "Choix technologies, CI/CD, monitoring, stratégie de déploiement"
             }
         };
 
