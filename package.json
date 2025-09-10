@@ -2,7 +2,7 @@
   "name": "prompt-generator",
   "version": "1.0.0",
   "description": "> Fichier `.md` décrivant la création d'une application web pour composer des prompts, calculer un score (role, tâche, clarté, sécurité...), prévisualiser et exporter aux formats `.txt`, `.xml` et `.md`.",
-  "main": "dist/index.js",
+  "main": "app.js",
   "scripts": {
     "serve": "npx http-server . -p 8080 -o",
     "dev": "npx http-server . -p 8080",
@@ -10,9 +10,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/node": "^24.3.1",
-    "typescript": "^5.9.2"
-  }
+  "license": "ISC"
 }
