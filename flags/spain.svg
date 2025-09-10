@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+  <rect width="900" height="600" fill="#AA151B"/>
+  <rect width="900" height="300" y="150" fill="#F1BF00"/>
+  <!-- Armoiries simplifiées -->
+  <g transform="translate(270, 200)">
+    <rect x="0" y="0" width="120" height="100" fill="#AA151B" stroke="#000" stroke-width="2"/>
+    <rect x="10" y="10" width="30" height="30" fill="#F1BF00"/>
+    <rect x="50" y="10" width="30" height="30" fill="#F1BF00"/>
+    <rect x="90" y="10" width="20" height="30" fill="#F1BF00"/>
+    <rect x="10" y="50" width="30" height="30" fill="#F1BF00"/>
+    <rect x="50" y="50" width="30" height="30" fill="#AA151B"/>
+    <rect x="90" y="50" width="20" height="30" fill="#F1BF00"/>
+  </g>
+</svg>
