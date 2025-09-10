@@ -78,7 +78,7 @@ main {
     border-radius: var(--radius);
     padding: 1.5rem;
     border: 1px solid #e5e7eb;
-    max-height: 80vh;
+    max-height: 85vh;
     overflow-y: auto;
 }
 
@@ -99,7 +99,7 @@ main {
     background: var(--white);
     border: 2px solid #e5e7eb;
     border-radius: 8px;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     cursor: grab;
     transition: var(--transition);
     position: relative;

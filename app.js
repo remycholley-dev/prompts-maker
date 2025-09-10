@@ -32,7 +32,15 @@ class PromptGenerator {
             context: 'Décrivez le contexte ou la situation...',
             task: 'Décrivez précisément ce que vous attendez...',
             constraints: 'Limitations, format souhaité, ton...',
-            examples: 'Donnez des exemples de résultats attendus...'
+            examples: 'Donnez des exemples de résultats attendus...',
+            format: 'Ex: Liste à puces, tableau, 500 mots, format JSON...',
+            audience: 'Ex: Débutants, experts, grand public, étudiants...',
+            methodology: 'Ex: Méthode SMART, framework Agile, analyse SWOT...',
+            sources: 'Ex: Études récentes, sources académiques, données officielles...',
+            exclusions: 'Ex: Ne pas mentionner X, éviter les sujets Y...',
+            success: 'Ex: Actionnable, mesurable, comprend des métriques...',
+            urgency: 'Ex: Priorité 1: qualité, Priorité 2: rapidité...',
+            tone: 'Ex: Professionnel, décontracté, technique, pédagogique...'
         };
 
         this.fieldLabels = {
@@ -40,7 +48,15 @@ class PromptGenerator {
             context: '📋 Contexte',
             task: '🎯 Tâche principale',
             constraints: '⚙️ Contraintes & Spécifications',
-            examples: '💡 Exemples'
+            examples: '💡 Exemples',
+            format: '🎨 Format de sortie',
+            audience: '📊 Audience cible',
+            methodology: '🔧 Méthodologie',
+            sources: '📋 Sources & Références',
+            exclusions: '🚫 Exclusions',
+            success: '✅ Critères de succès',
+            urgency: '⏰ Urgence/Priorités',
+            tone: '🎭 Ton & Style'
         };
 
         this.templates = {
@@ -289,7 +305,11 @@ class PromptGenerator {
                            oninput="promptGenerator.updateItemValue('${item.id}', this.value)">
                 </div>`;
         } else {
-            const rows = item.type === 'task' ? 4 : 3;
+            let rows = 3;
+            if (item.type === 'task') rows = 4;
+            else if (item.type === 'methodology' || item.type === 'success') rows = 4;
+            else if (item.type === 'sources' || item.type === 'exclusions') rows = 3;
+            else if (item.type === 'format' || item.type === 'audience' || item.type === 'tone' || item.type === 'urgency') rows = 2;
             return `
                 <div class="field-input-group">
                     <textarea rows="${rows}" placeholder="${item.placeholder}" 
