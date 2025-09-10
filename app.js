@@ -2,11 +2,14 @@ class PromptGenerator {
     constructor() {
         this.elements = {
             role: document.getElementById('role'),
+            roleSelect: document.getElementById('roleSelect'),
             context: document.getElementById('context'),
             task: document.getElementById('task'),
             constraints: document.getElementById('constraints'),
             examples: document.getElementById('examples'),
             previewContent: document.getElementById('previewContent'),
+            dropZone: document.getElementById('dropZone'),
+            promptStructure: document.getElementById('promptStructure'),
             totalScore: document.getElementById('totalScore'),
             clarityScore: document.getElementById('clarityScore'),
             clarityValue: document.getElementById('clarityValue'),
@@ -19,6 +22,24 @@ class PromptGenerator {
         };
 
         this.currentFormat = 'text';
+        this.promptItems = [];
+        this.predefinedRoles = {
+            'expert-dev': 'Expert en développement logiciel avec 10 ans d\'expérience en architecture et bonnes pratiques',
+            'redacteur': 'Rédacteur professionnel spécialisé en contenu marketing et communication digitale',
+            'analyste': 'Analyste de données senior avec expertise en Python, machine learning et visualisation',
+            'designer': 'Designer UX/UI créatif avec expertise en design systems et accessibilité',
+            'marketing': 'Expert marketing digital spécialisé en stratégie de contenu et growth hacking',
+            'consultant': 'Consultant business avec 15 ans d\'expérience en transformation digitale'
+        };
+
+        this.fieldLabels = {
+            role: '🎭 Rôle / Persona',
+            context: '📋 Contexte',
+            task: '🎯 Tâche principale',
+            constraints: '⚙️ Contraintes & Spécifications',
+            examples: '💡 Exemples'
+        };
+
         this.templates = {
             code: {
                 role: "Expert en développement logiciel avec 10 ans d'expérience",
@@ -55,17 +76,23 @@ class PromptGenerator {
 
     init() {
         this.attachEventListeners();
+        this.setupDragAndDrop();
+        this.setupRoleSelector();
         this.updatePreview();
         this.updateScore();
     }
 
     attachEventListeners() {
-        // Mise à jour en temps réel
+        // Mise à jour en temps réel pour les éléments dans la structure uniquement
         Object.values(this.elements).forEach(element => {
             if (element && (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA')) {
                 element.addEventListener('input', () => {
-                    this.updatePreview();
-                    this.updateScore();
+                    // Seulement mettre à jour si on a des éléments dans la structure
+                    if (this.promptItems.length > 0) {
+                        this.updatePromptStructure();
+                        this.updatePreview();
+                        this.updateScore();
+                    }
                 });
             }
         });
@@ -97,6 +124,142 @@ class PromptGenerator {
         });
     }
 
+    setupRoleSelector() {
+        this.elements.roleSelect.addEventListener('change', (e) => {
+            const selectedValue = e.target.value;
+            if (selectedValue && selectedValue !== 'custom') {
+                if (this.predefinedRoles[selectedValue]) {
+                    this.elements.role.value = this.predefinedRoles[selectedValue];
+                }
+            } else if (selectedValue === 'custom') {
+                this.elements.role.value = '';
+                this.elements.role.focus();
+            }
+            // Seulement mettre à jour si le rôle est dans la structure
+            if (this.promptItems.find(item => item.type === 'role')) {
+                this.updatePromptStructure();
+                this.updatePreview();
+                this.updateScore();
+            }
+        });
+    }
+
+    setupDragAndDrop() {
+        const draggableFields = document.querySelectorAll('.draggable-field');
+        const dropZone = this.elements.dropZone;
+
+        draggableFields.forEach(field => {
+            field.addEventListener('dragstart', (e) => {
+                field.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', field.dataset.field);
+                e.dataTransfer.effectAllowed = 'copy';
+            });
+
+            field.addEventListener('dragend', () => {
+                field.classList.remove('dragging');
+            });
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+            dropZone.parentElement.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            if (!dropZone.contains(e.relatedTarget)) {
+                dropZone.parentElement.classList.remove('drag-over');
+            }
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.parentElement.classList.remove('drag-over');
+            
+            const fieldType = e.dataTransfer.getData('text/plain');
+            this.addFieldToPrompt(fieldType);
+        });
+    }
+
+    addFieldToPrompt(fieldType) {
+        // Éviter les doublons
+        if (this.promptItems.find(item => item.type === fieldType)) {
+            this.showNotification('Ce champ est déjà dans le prompt', 'warning');
+            return;
+        }
+
+        const fieldValue = this.elements[fieldType]?.value.trim();
+        if (!fieldValue) {
+            this.showNotification('Le champ est vide', 'warning');
+            return;
+        }
+
+        const promptItem = {
+            type: fieldType,
+            label: this.fieldLabels[fieldType],
+            value: fieldValue,
+            id: Date.now()
+        };
+
+        this.promptItems.push(promptItem);
+        this.renderPromptStructure();
+        this.updatePreview();
+        this.updateScore();
+        this.showNotification('Champ ajouté au prompt', 'success');
+    }
+
+    removeFieldFromPrompt(itemId) {
+        this.promptItems = this.promptItems.filter(item => item.id !== itemId);
+        this.renderPromptStructure();
+        this.updatePreview();
+        this.updateScore();
+    }
+
+    renderPromptStructure() {
+        const structure = this.elements.promptStructure;
+        
+        if (this.promptItems.length === 0) {
+            structure.className = 'prompt-structure';
+            structure.innerHTML = '';
+            return;
+        }
+
+        structure.className = 'prompt-structure has-items';
+        structure.innerHTML = this.promptItems.map(item => `
+            <div class="prompt-item" data-id="${item.id}">
+                <div class="prompt-item-header">
+                    <span class="prompt-item-title">${item.label}</span>
+                    <div class="prompt-item-actions">
+                        <button class="remove-btn" onclick="promptGenerator.removeFieldFromPrompt(${item.id})">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+                <div class="prompt-item-content">${item.value}</div>
+            </div>
+        `).join('') + `
+            <div class="drop-placeholder-bottom">
+                <p>🎯 Glissez et déposez d'autres éléments ici pour compléter votre prompt</p>
+            </div>
+        `;
+    }
+
+    updatePromptStructure() {
+        // Mettre à jour les valeurs dans la structure existante
+        let hasChanged = false;
+        this.promptItems.forEach(item => {
+            const currentValue = this.elements[item.type]?.value.trim() || '';
+            if (currentValue !== item.value) {
+                item.value = currentValue;
+                hasChanged = true;
+            }
+        });
+        
+        if (hasChanged && this.promptItems.length > 0) {
+            this.renderPromptStructure();
+        }
+    }
+
     applyTemplate(template) {
         this.elements.role.value = template.role;
         this.elements.context.value = template.context;
@@ -104,8 +267,12 @@ class PromptGenerator {
         this.elements.constraints.value = template.constraints;
         this.elements.examples.value = template.examples;
         
-        this.updatePreview();
-        this.updateScore();
+        // Les templates ne mettent à jour la preview/score que si des éléments sont droppés
+        if (this.promptItems.length > 0) {
+            this.updatePromptStructure();
+            this.updatePreview();
+            this.updateScore();
+        }
     }
 
     getPromptData() {
@@ -119,21 +286,43 @@ class PromptGenerator {
     }
 
     generatePrompt(format = 'text') {
-        const data = this.getPromptData();
-        
-        if (!data.task) {
-            return '';
+        // Utiliser UNIQUEMENT les éléments droppés dans la structure
+        if (this.promptItems.length > 0) {
+            return this.generatePromptFromStructure(format);
         }
+        
+        // Si aucun élément n'est droppé, retourner vide
+        return '';
+    }
 
+    generatePromptFromStructure(format = 'text') {
+        if (this.promptItems.length === 0) return '';
+        
         switch (format) {
             case 'text':
-                return this.generateTextPrompt(data);
+                return this.promptItems.map(item => {
+                    const label = item.label.replace(/[🎭📋🎯⚙️💡]/g, '').trim();
+                    return `${label}: ${item.value}`;
+                }).join('\n\n');
+                
             case 'markdown':
-                return this.generateMarkdownPrompt(data);
+                let markdown = '# Prompt IA\n\n';
+                markdown += this.promptItems.map(item => {
+                    return `## ${item.label}\n${item.value}`;
+                }).join('\n\n');
+                return markdown;
+                
             case 'xml':
-                return this.generateXmlPrompt(data);
+                let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<prompt>\n';
+                xml += this.promptItems.map(item => {
+                    const tag = item.type;
+                    return `  <${tag}>${this.escapeXml(item.value)}</${tag}>`;
+                }).join('\n');
+                xml += '\n</prompt>';
+                return xml;
+                
             default:
-                return this.generateTextPrompt(data);
+                return this.generatePromptFromStructure('text');
         }
     }
 
@@ -226,12 +415,21 @@ class PromptGenerator {
         if (prompt) {
             this.elements.previewContent.textContent = prompt;
         } else {
-            this.elements.previewContent.innerHTML = '<p class="empty-state">Commencez à remplir les champs pour voir votre prompt...</p>';
+            this.elements.previewContent.innerHTML = '<p class="empty-state">Glissez et déposez des éléments dans la zone de composition pour voir votre prompt...</p>';
         }
     }
 
     calculateScore() {
-        const data = this.getPromptData();
+        // Calculer le score UNIQUEMENT sur les éléments droppés
+        if (this.promptItems.length === 0) {
+            return {
+                clarity: 0,
+                specificity: 0,
+                context: 0,
+                structure: 0
+            };
+        }
+
         const scores = {
             clarity: 0,
             specificity: 0,
@@ -239,42 +437,40 @@ class PromptGenerator {
             structure: 0
         };
 
-        // Score de clarté (0-25)
-        if (data.task) {
-            const taskWords = data.task.split(' ').length;
+        // Score de clarté (0-25) - basé sur la tâche si elle est présente
+        const taskItem = this.promptItems.find(item => item.type === 'task');
+        if (taskItem && taskItem.value) {
+            const taskWords = taskItem.value.split(' ').length;
             scores.clarity = Math.min(25, (taskWords / 20) * 25);
             
             // Bonus pour mots clés de clarté
             const clarityKeywords = ['précisément', 'spécifiquement', 'exactement', 'clairement'];
-            if (clarityKeywords.some(keyword => data.task.toLowerCase().includes(keyword))) {
+            if (clarityKeywords.some(keyword => taskItem.value.toLowerCase().includes(keyword))) {
                 scores.clarity = Math.min(25, scores.clarity + 5);
             }
         }
 
         // Score de spécificité (0-25)
-        if (data.role) {
+        const roleItem = this.promptItems.find(item => item.type === 'role');
+        if (roleItem && roleItem.value) {
             scores.specificity += 10;
         }
-        if (data.constraints) {
-            const constraintWords = data.constraints.split(' ').length;
+        
+        const constraintsItem = this.promptItems.find(item => item.type === 'constraints');
+        if (constraintsItem && constraintsItem.value) {
+            const constraintWords = constraintsItem.value.split(' ').length;
             scores.specificity += Math.min(15, (constraintWords / 15) * 15);
         }
 
         // Score de contexte (0-25)
-        if (data.context) {
-            const contextWords = data.context.split(' ').length;
+        const contextItem = this.promptItems.find(item => item.type === 'context');
+        if (contextItem && contextItem.value) {
+            const contextWords = contextItem.value.split(' ').length;
             scores.context = Math.min(25, (contextWords / 15) * 25);
         }
 
-        // Score de structure (0-25)
-        let filledFields = 0;
-        if (data.role) filledFields++;
-        if (data.context) filledFields++;
-        if (data.task) filledFields++;
-        if (data.constraints) filledFields++;
-        if (data.examples) filledFields++;
-        
-        scores.structure = (filledFields / 5) * 25;
+        // Score de structure (0-25) - basé sur le nombre d'éléments droppés
+        scores.structure = (this.promptItems.length / 5) * 25;
 
         return scores;
     }
@@ -400,12 +596,17 @@ class PromptGenerator {
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
         notification.textContent = message;
+        
+        const bgColor = type === 'success' ? 'var(--success)' : 
+                       type === 'error' ? 'var(--danger)' : 
+                       type === 'warning' ? 'var(--warning)' : 'var(--primary)';
+        
         notification.style.cssText = `
             position: fixed;
             bottom: 20px;
             right: 20px;
             padding: 1rem 1.5rem;
-            background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--danger)' : 'var(--primary)'};
+            background: ${bgColor};
             color: white;
             border-radius: 8px;
             box-shadow: var(--shadow-lg);
@@ -450,6 +651,7 @@ style.textContent = `
 document.head.appendChild(style);
 
 // Initialisation
+let promptGenerator;
 document.addEventListener('DOMContentLoaded', () => {
-    new PromptGenerator();
+    promptGenerator = new PromptGenerator();
 });

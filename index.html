@@ -14,42 +14,113 @@
         </header>
 
         <main>
-            <!-- Section de composition du prompt -->
-            <section class="prompt-builder">
-                <div class="input-group">
-                    <label for="role">Rôle / Persona</label>
-                    <input type="text" id="role" placeholder="Ex: Expert en développement web...">
-                    <span class="hint">Définissez le rôle ou l'expertise de l'IA</span>
-                </div>
+            <div class="app-layout">
+                <!-- Section des champs à gauche -->
+                <aside class="fields-panel">
+                    <h2>🔧 Éléments du prompt</h2>
+                    
+                    <div class="draggable-field" draggable="true" data-field="role">
+                        <div class="field-header">
+                            <span class="drag-handle">⋮⋮</span>
+                            <label>🎭 Rôle / Persona</label>
+                        </div>
+                        <div class="field-content">
+                            <select id="roleSelect" class="role-selector">
+                                <option value="">Sélectionner un rôle prédéfini...</option>
+                                <option value="expert-dev">Expert en développement logiciel</option>
+                                <option value="redacteur">Rédacteur professionnel</option>
+                                <option value="analyste">Analyste de données</option>
+                                <option value="designer">Designer UX/UI</option>
+                                <option value="marketing">Expert marketing</option>
+                                <option value="consultant">Consultant business</option>
+                                <option value="custom">Personnalisé...</option>
+                            </select>
+                            <input type="text" id="role" placeholder="Ou saisissez votre propre rôle..." style="margin-top: 0.5rem;">
+                            <span class="hint">Définissez le rôle ou l'expertise de l'IA</span>
+                        </div>
+                    </div>
 
-                <div class="input-group">
-                    <label for="context">Contexte</label>
-                    <textarea id="context" rows="3" placeholder="Décrivez le contexte ou la situation..."></textarea>
-                    <span class="hint">Fournissez le contexte nécessaire</span>
-                </div>
+                    <div class="draggable-field" draggable="true" data-field="context">
+                        <div class="field-header">
+                            <span class="drag-handle">⋮⋮</span>
+                            <label>📋 Contexte</label>
+                        </div>
+                        <div class="field-content">
+                            <textarea id="context" rows="3" placeholder="Décrivez le contexte ou la situation..."></textarea>
+                            <span class="hint">Fournissez le contexte nécessaire</span>
+                        </div>
+                    </div>
 
-                <div class="input-group">
-                    <label for="task">Tâche principale</label>
-                    <textarea id="task" rows="4" placeholder="Décrivez précisément ce que vous attendez..."></textarea>
-                    <span class="hint">Soyez spécifique sur l'objectif à atteindre</span>
-                </div>
+                    <div class="draggable-field" draggable="true" data-field="task">
+                        <div class="field-header">
+                            <span class="drag-handle">⋮⋮</span>
+                            <label>🎯 Tâche principale</label>
+                        </div>
+                        <div class="field-content">
+                            <textarea id="task" rows="4" placeholder="Décrivez précisément ce que vous attendez..."></textarea>
+                            <span class="hint">Soyez spécifique sur l'objectif à atteindre</span>
+                        </div>
+                    </div>
 
-                <div class="input-group">
-                    <label for="constraints">Contraintes & Spécifications</label>
-                    <textarea id="constraints" rows="3" placeholder="Limitations, format souhaité, ton..."></textarea>
-                    <span class="hint">Précisez les contraintes et le format de sortie</span>
-                </div>
+                    <div class="draggable-field" draggable="true" data-field="constraints">
+                        <div class="field-header">
+                            <span class="drag-handle">⋮⋮</span>
+                            <label>⚙️ Contraintes & Spécifications</label>
+                        </div>
+                        <div class="field-content">
+                            <textarea id="constraints" rows="3" placeholder="Limitations, format souhaité, ton..."></textarea>
+                            <span class="hint">Précisez les contraintes et le format de sortie</span>
+                        </div>
+                    </div>
 
-                <div class="input-group">
-                    <label for="examples">Exemples (optionnel)</label>
-                    <textarea id="examples" rows="3" placeholder="Donnez des exemples de résultats attendus..."></textarea>
-                    <span class="hint">Les exemples améliorent la précision</span>
-                </div>
-            </section>
+                    <div class="draggable-field" draggable="true" data-field="examples">
+                        <div class="field-header">
+                            <span class="drag-handle">⋮⋮</span>
+                            <label>💡 Exemples (optionnel)</label>
+                        </div>
+                        <div class="field-content">
+                            <textarea id="examples" rows="3" placeholder="Donnez des exemples de résultats attendus..."></textarea>
+                            <span class="hint">Les exemples améliorent la précision</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Templates rapides -->
+                    <div class="templates-section">
+                        <h3>⚡ Templates rapides</h3>
+                        <div class="templates-grid">
+                            <button class="template-btn" data-template="code">
+                                💻 Code
+                            </button>
+                            <button class="template-btn" data-template="writing">
+                                ✍️ Rédaction
+                            </button>
+                            <button class="template-btn" data-template="analysis">
+                                📊 Analyse
+                            </button>
+                            <button class="template-btn" data-template="creative">
+                                🎨 Créatif
+                            </button>
+                        </div>
+                    </div>
+                </aside>
 
-            <!-- Section de scoring -->
-            <section class="scoring-section">
-                <h2>Score du Prompt</h2>
+                <!-- Zone principale à droite -->
+                <main class="main-content">
+                    <!-- Zone de composition -->
+                    <section class="prompt-composer">
+                        <h2>📝 Composition du prompt</h2>
+                        <div class="drop-zone" id="dropZone">
+                            <div class="drop-placeholder">
+                                <p>🎯 Glissez et déposez les éléments ici pour composer votre prompt</p>
+                                <p class="drop-hint">L'ordre des éléments déterminera la structure de votre prompt</p>
+                            </div>
+                            <div class="prompt-structure" id="promptStructure"></div>
+                        </div>
+                    </section>
+
+                    <!-- Section de scoring -->
+                    <section class="scoring-section">
+                        <h2>📊 Score du Prompt</h2>
                 <div class="score-display">
                     <div class="score-circle">
                         <span id="totalScore">0</span>
@@ -85,13 +156,13 @@
                         </div>
                         <span class="score-value" id="structureValue">0</span>
                     </div>
-                </div>
-            </section>
+                        </div>
+                    </section>
 
-            <!-- Section de prévisualisation -->
-            <section class="preview-section">
-                <div class="preview-header">
-                    <h2>Prévisualisation</h2>
+                    <!-- Section de prévisualisation -->
+                    <section class="preview-section">
+                        <div class="preview-header">
+                            <h2>👀 Prévisualisation</h2>
                     <div class="format-tabs">
                         <button class="tab-btn active" data-format="text">Texte</button>
                         <button class="tab-btn" data-format="markdown">Markdown</button>
@@ -100,12 +171,12 @@
                 </div>
                 <div class="preview-content" id="previewContent">
                     <p class="empty-state">Commencez à remplir les champs pour voir votre prompt...</p>
-                </div>
-            </section>
+                        </div>
+                    </section>
 
-            <!-- Section d'export -->
-            <section class="export-section">
-                <h2>Exporter</h2>
+                    <!-- Section d'export -->
+                    <section class="export-section">
+                        <h2>📤 Exporter</h2>
                 <div class="export-buttons">
                     <button class="btn btn-secondary" id="copyBtn">
                         📋 Copier
@@ -119,28 +190,10 @@
                     <button class="btn btn-primary" id="exportXmlBtn">
                         📦 Exporter .xml
                     </button>
-                </div>
-            </section>
-
-            <!-- Templates prédéfinis -->
-            <section class="templates-section">
-                <h2>Templates rapides</h2>
-                <div class="templates-grid">
-                    <button class="template-btn" data-template="code">
-                        💻 Code & Développement
-                    </button>
-                    <button class="template-btn" data-template="writing">
-                        ✍️ Rédaction & Contenu
-                    </button>
-                    <button class="template-btn" data-template="analysis">
-                        📊 Analyse & Données
-                    </button>
-                    <button class="template-btn" data-template="creative">
-                        🎨 Créatif & Design
-                    </button>
-                </div>
-            </section>
-        </main>
+                        </div>
+                    </section>
+                </main>
+            </div>
 
         <footer>
             <p>Générateur de Prompts IA - Optimisez vos interactions avec l'IA</p>
