@@ -65,84 +65,132 @@ class PromptGenerator {
                 context: "Je travaille sur un projet d'application web moderne utilisant React et TypeScript",
                 task: "Aide-moi à créer un composant React réutilisable pour gérer l'authentification des utilisateurs",
                 constraints: "Le code doit être typé avec TypeScript, suivre les best practices React, et inclure des tests unitaires",
-                examples: "Le composant doit gérer la connexion, la déconnexion et la vérification du statut d'authentification"
+                examples: "Le composant doit gérer la connexion, la déconnexion et la vérification du statut d'authentification",
+                format: "Code commenté avec documentation JSDoc et exemples d'utilisation",
+                audience: "Développeurs React niveau intermédiaire à avancé",
+                methodology: "Test-Driven Development (TDD) avec Jest et React Testing Library",
+                tone: "Technique et précis, avec explications pédagogiques"
             },
             writing: {
                 role: "Rédacteur professionnel spécialisé en contenu marketing",
                 context: "Notre entreprise lance un nouveau produit SaaS pour la gestion de projet",
                 task: "Rédige un article de blog de 800 mots sur les bénéfices de notre solution",
                 constraints: "Ton professionnel mais accessible, optimisé SEO, avec 3 sections principales",
-                examples: "Inclure des statistiques sur la productivité et des témoignages clients"
+                examples: "Inclure des statistiques sur la productivité et des témoignages clients",
+                format: "Article structuré avec introduction, 3 sections développées, conclusion et call-to-action",
+                audience: "Chefs de projet et managers d'équipes tech",
+                sources: "Études récentes sur la productivité, données internes, témoignages clients vérifiés",
+                tone: "Professionnel mais engageant, accessible sans être simpliste"
             },
             analysis: {
                 role: "Analyste de données senior avec expertise en Python et machine learning",
                 context: "J'ai un dataset de ventes e-commerce avec 100k lignes",
                 task: "Analyse les tendances de vente et identifie les facteurs clés de succès",
                 constraints: "Utilise pandas et scikit-learn, fournis des visualisations claires",
-                examples: "Graphiques de tendances mensuelles, corrélations entre variables, prédictions"
+                examples: "Graphiques de tendances mensuelles, corrélations entre variables, prédictions",
+                format: "Rapport d'analyse avec code Python commenté et visualisations interprétées",
+                audience: "Direction commerciale et équipe marketing",
+                methodology: "Analyse exploratoire des données (EDA) suivie de modélisation prédictive",
+                success: "Insights actionnables avec recommandations chiffrées et ROI estimé"
             },
             creative: {
                 role: "Designer UX/UI créatif avec expertise en design systems",
                 context: "Application mobile de fitness pour jeunes adultes",
                 task: "Conçois une interface utilisateur moderne et engageante",
                 constraints: "Design minimaliste, palette de couleurs énergique, accessible WCAG AA",
-                examples: "Dashboard de progression, écrans d'exercices, système de gamification"
+                examples: "Dashboard de progression, écrans d'exercices, système de gamification",
+                format: "Maquettes haute-fidélité avec prototype interactif et guide de style",
+                audience: "Utilisateurs 18-35 ans, actifs numériquement, motivés par la performance",
+                methodology: "Design Thinking avec tests utilisateurs itératifs",
+                tone: "Moderne, énergique et motivant sans être agressif"
             },
             education: {
                 role: "Expert pédagogique avec 15 ans d'expérience en formation",
                 context: "Je dois créer un module de formation sur la cybersécurité pour des employés non-techniques",
                 task: "Développe un cours interactif de 2 heures avec exercices pratiques",
                 constraints: "Langage accessible, exemples concrets, évaluations intégrées",
-                examples: "Cas d'usage réels, quiz interactifs, simulations d'attaques"
+                examples: "Cas d'usage réels, quiz interactifs, simulations d'attaques",
+                format: "Module e-learning avec vidéos, quiz interactifs et certification finale",
+                audience: "Employés de bureau sans background technique, tous niveaux hiérarchiques",
+                methodology: "Pédagogie active avec méthode du storytelling et apprentissage par l'exemple",
+                success: "85% de réussite au quiz final et application immédiate des bonnes pratiques"
             },
             research: {
                 role: "Chercheur senior spécialisé en intelligence économique",
                 context: "Étude de marché pour le lancement d'une startup dans la fintech",
                 task: "Analyse approfondie du secteur des paiements mobiles en Europe",
                 constraints: "Sources fiables, données chiffrées récentes, analyse SWOT complète",
-                examples: "Étude concurrentielle, taille de marché, tendances réglementaires"
+                examples: "Étude concurrentielle, taille de marché, tendances réglementaires",
+                format: "Rapport exécutif 20 pages + annexes détaillées avec tableaux et graphiques",
+                audience: "Investisseurs potentiels et équipe dirigeante de la startup",
+                sources: "Rapports BCE, études PwC/McKinsey, données publiques des fintechs européennes",
+                methodology: "Analyse Porter des 5 forces + étude quantitative et qualitative"
             },
             business: {
                 role: "Consultant en stratégie d'entreprise avec expertise startup",
                 context: "Startup B2B SaaS en recherche de financement série A",
                 task: "Création d'un business plan complet pour lever 5M€",
                 constraints: "Format investisseur, projections financières 5 ans, go-to-market détaillé",
-                examples: "Modèle économique, stratégie d'acquisition client, roadmap produit"
+                examples: "Modèle économique, stratégie d'acquisition client, roadmap produit",
+                format: "Pitch deck 15 slides + business plan détaillé 30 pages",
+                audience: "Fonds de venture capital et business angels spécialisés SaaS B2B",
+                methodology: "Framework Lean Canvas + modèle financier bottom-up",
+                success: "Valorisation claire, traction démontrée, roadmap réaliste avec milestones"
             },
             content: {
                 role: "Content manager expert en social media et storytelling",
                 context: "Campagne de lancement produit pour une marque lifestyle",
                 task: "Stratégie de contenu multi-plateforme pour 3 mois",
                 constraints: "Calendrier éditorial, formats adaptés par plateforme, engagement communauté",
-                examples: "Posts Instagram, threads Twitter, vidéos TikTok, newsletter"
+                examples: "Posts Instagram, threads Twitter, vidéos TikTok, newsletter",
+                format: "Calendrier éditorial détaillé + templates de contenu par plateforme",
+                audience: "Millennials et Gen Z intéressés par le lifestyle et le bien-être",
+                urgency: "Priorité 1: engagement authentique, Priorité 2: reach, Priorité 3: conversion",
+                tone: "Authentique, inspirant et proche de la communauté"
             },
             legal: {
                 role: "Juriste spécialisé en droit numérique et RGPD",
                 context: "Application mobile collectant des données utilisateurs en Europe",
                 task: "Rédaction d'une politique de confidentialité conforme RGPD",
                 constraints: "Langage clair, conformité légale, transparence maximale",
-                examples: "Gestion cookies, droits utilisateurs, transferts internationaux"
+                examples: "Gestion cookies, droits utilisateurs, transferts internationaux",
+                format: "Document légal structuré avec FAQ utilisateurs en annexe",
+                audience: "Utilisateurs finaux et autorités de protection des données",
+                exclusions: "Éviter le jargon juridique complexe, pas de clauses abusives",
+                methodology: "Audit RGPD complet selon la méthodologie CNIL"
             },
             health: {
                 role: "Nutritionniste certifiée avec expertise en nutrition sportive",
                 context: "Accompagnement d'un athlète amateur préparant un marathon",
                 task: "Plan nutritionnel personnalisé pour optimiser les performances",
                 constraints: "Scientifiquement fondé, pratique au quotidien, budget raisonnable",
-                examples: "Planification repas, suppléments, hydratation, récupération"
+                examples: "Planification repas, suppléments, hydratation, récupération",
+                format: "Plan alimentaire détaillé avec menus hebdomadaires et recettes",
+                audience: "Coureur amateur, homme 35 ans, objectif sub 3h30",
+                exclusions: "Pas de suppléments non testés, éviter les régimes restrictifs",
+                success: "Performance optimisée, récupération améliorée, poids de forme maintenu"
             },
             environment: {
                 role: "Expert en développement durable et RSE",
                 context: "PME industrielle souhaitant réduire son impact environnemental",
                 task: "Audit environnemental et plan d'action sur 3 ans",
                 constraints: "ROI démontré, conformité réglementaire, mesures concrètes",
-                examples: "Réduction CO2, gestion déchets, économies d'énergie, certifications"
+                examples: "Réduction CO2, gestion déchets, économies d'énergie, certifications",
+                format: "Rapport d'audit + roadmap avec indicateurs KPI et budget prévisionnel",
+                audience: "Direction générale et responsables opérationnels",
+                methodology: "Bilan carbone selon GHG Protocol + analyse cycle de vie",
+                success: "Réduction 30% émissions CO2, certification ISO 14001, ROI positif an 2"
             },
             tech: {
                 role: "Architecte solution cloud avec expertise DevOps",
                 context: "Migration d'une application legacy vers une architecture microservices",
                 task: "Conception de l'architecture cible et plan de migration",
                 constraints: "Zero downtime, scalabilité, sécurité, coûts optimisés",
-                examples: "Choix technologies, CI/CD, monitoring, stratégie de déploiement"
+                examples: "Choix technologies, CI/CD, monitoring, stratégie de déploiement",
+                format: "Schémas d'architecture + documentation technique + plan de migration détaillé",
+                audience: "Équipe de développement et direction technique",
+                methodology: "Domain-Driven Design avec approche Strangler Fig Pattern",
+                urgency: "Priorité 1: sécurité, Priorité 2: disponibilité, Priorité 3: performance"
             }
         };
 
@@ -359,21 +407,14 @@ class PromptGenerator {
         // On peut les utiliser pour créer des structures prédéfinies
         this.promptItems = [];
         
-        if (template.role) {
-            this.addFieldToPromptWithValue('role', template.role);
-        }
-        if (template.context) {
-            this.addFieldToPromptWithValue('context', template.context);
-        }
-        if (template.task) {
-            this.addFieldToPromptWithValue('task', template.task);
-        }
-        if (template.constraints) {
-            this.addFieldToPromptWithValue('constraints', template.constraints);
-        }
-        if (template.examples) {
-            this.addFieldToPromptWithValue('examples', template.examples);
-        }
+        // Ajouter tous les champs définis dans le template dans un ordre logique
+        const fieldOrder = ['role', 'context', 'task', 'constraints', 'examples', 'format', 'audience', 'methodology', 'sources', 'exclusions', 'success', 'urgency', 'tone'];
+        
+        fieldOrder.forEach(fieldType => {
+            if (template[fieldType]) {
+                this.addFieldToPromptWithValue(fieldType, template[fieldType]);
+            }
+        });
     }
     
     addFieldToPromptWithValue(fieldType, value) {
