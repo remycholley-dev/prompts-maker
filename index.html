@@ -9,146 +9,154 @@
 <body>
     <div class="container">
         <header>
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="fr" title="Français">
+                    🇫🇷
+                </button>
+                <button class="lang-btn" data-lang="en" title="English">
+                    🇬🇧
+                </button>
+            </div>
             <p id="logo">🤖</p>
-            <h1> Générateur de Prompts IA</h1>
-            <p class="subtitle">Créez des prompts efficaces avec scoring en temps réel</p>
+            <h1 data-i18n="title"> Générateur de Prompts IA</h1>
+            <p class="subtitle" data-i18n="subtitle">Créez des prompts efficaces avec scoring en temps réel</p>
         </header>
 
         <main>
             <div class="app-layout">
                 <!-- Section des champs à gauche -->
                 <aside class="fields-panel">
-                    <h2>🔧 Éléments du prompt</h2>
+                    <h2 data-i18n="elementsTitle">🔧 Éléments du prompt</h2>
                     
                     <div class="draggable-field" draggable="true" data-field="role">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>🎭 Rôle / Persona</label>
+                            <label data-i18n="fieldLabels.role">🎭 Rôle / Persona</label>
                         </div>
                     </div>
 
                     <div class="draggable-field" draggable="true" data-field="context">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>📋 Contexte</label>
+                            <label data-i18n="fieldLabels.context">📋 Contexte</label>
                         </div>
                     </div>
 
                     <div class="draggable-field" draggable="true" data-field="task">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>🎯 Tâche principale</label>
+                            <label data-i18n="fieldLabels.task">🎯 Tâche principale</label>
                         </div>
                     </div>
 
                     <div class="draggable-field" draggable="true" data-field="constraints">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>⚙️ Contraintes & Spécifications</label>
+                            <label data-i18n="fieldLabels.constraints">⚙️ Contraintes & Spécifications</label>
                         </div>
                     </div>
 
                     <div class="draggable-field" draggable="true" data-field="examples">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>💡 Exemples (optionnel)</label>
+                            <label data-i18n="fieldLabels.examples">💡 Exemples</label>
                         </div>
                     </div>
 
                     <div class="draggable-field" draggable="true" data-field="format">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>🎨 Format de sortie</label>
+                            <label data-i18n="fieldLabels.format">🎨 Format de sortie</label>
                         </div>
                     </div>
 
                     <div class="draggable-field" draggable="true" data-field="audience">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>📊 Audience cible</label>
+                            <label data-i18n="fieldLabels.audience">📊 Audience cible</label>
                         </div>
                     </div>
 
                     <div class="draggable-field" draggable="true" data-field="methodology">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>🔧 Méthodologie</label>
+                            <label data-i18n="fieldLabels.methodology">🔧 Méthodologie</label>
                         </div>
                     </div>
 
                     <div class="draggable-field" draggable="true" data-field="sources">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>📋 Sources & Références</label>
+                            <label data-i18n="fieldLabels.sources">📋 Sources & Références</label>
                         </div>
                     </div>
 
                     <div class="draggable-field" draggable="true" data-field="exclusions">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>🚫 Exclusions</label>
+                            <label data-i18n="fieldLabels.exclusions">🚫 Exclusions</label>
                         </div>
                     </div>
 
                     <div class="draggable-field" draggable="true" data-field="success">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>✅ Critères de succès</label>
+                            <label data-i18n="fieldLabels.success">✅ Critères de succès</label>
                         </div>
                     </div>
 
                     <div class="draggable-field" draggable="true" data-field="urgency">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>⏰ Urgence/Priorités</label>
+                            <label data-i18n="fieldLabels.urgency">⏰ Urgence/Priorités</label>
                         </div>
                     </div>
 
                     <div class="draggable-field" draggable="true" data-field="tone">
                         <div class="field-header">
                             <span class="drag-handle">⋮⋮</span>
-                            <label>🎭 Ton & Style</label>
+                            <label data-i18n="fieldLabels.tone">🎭 Ton & Style</label>
                         </div>
                     </div>
                     
                     <!-- Templates rapides -->
                     <div class="templates-section">
-                        <h3>⚡ Templates rapides</h3>
+                        <h3 data-i18n="quickTemplates">⚡ Templates rapides</h3>
                         <div class="templates-grid">
-                            <button class="template-btn" data-template="code">
+                            <button class="template-btn" data-template="code" data-i18n="templateNames.code">
                                 💻 Code
                             </button>
-                            <button class="template-btn" data-template="writing">
+                            <button class="template-btn" data-template="writing" data-i18n="templateNames.writing">
                                 ✍️ Rédaction
                             </button>
-                            <button class="template-btn" data-template="analysis">
+                            <button class="template-btn" data-template="analysis" data-i18n="templateNames.analysis">
                                 📊 Analyse
                             </button>
-                            <button class="template-btn" data-template="creative">
+                            <button class="template-btn" data-template="creative" data-i18n="templateNames.creative">
                                 🎨 Créatif
                             </button>
-                            <button class="template-btn" data-template="education">
+                            <button class="template-btn" data-template="education" data-i18n="templateNames.education">
                                 📚 Formation
                             </button>
-                            <button class="template-btn" data-template="research">
+                            <button class="template-btn" data-template="research" data-i18n="templateNames.research">
                                 🔍 Recherche
                             </button>
-                            <button class="template-btn" data-template="business">
+                            <button class="template-btn" data-template="business" data-i18n="templateNames.business">
                                 💼 Business
                             </button>
-                            <button class="template-btn" data-template="content">
+                            <button class="template-btn" data-template="content" data-i18n="templateNames.content">
                                 📱 Contenu
                             </button>
-                            <button class="template-btn" data-template="legal">
+                            <button class="template-btn" data-template="legal" data-i18n="templateNames.legal">
                                 ⚖️ Juridique
                             </button>
-                            <button class="template-btn" data-template="health">
+                            <button class="template-btn" data-template="health" data-i18n="templateNames.health">
                                 🏥 Santé
                             </button>
-                            <button class="template-btn" data-template="environment">
+                            <button class="template-btn" data-template="environment" data-i18n="templateNames.environment">
                                 🌱 Environnement
                             </button>
-                            <button class="template-btn" data-template="tech">
+                            <button class="template-btn" data-template="tech" data-i18n="templateNames.tech">
                                 🤖 Tech
                             </button>
                         </div>
@@ -159,7 +167,7 @@
                 <main class="main-content">
                     <!-- Zone de composition -->
                     <section class="prompt-composer">
-                        <h2>📝 Composition du prompt</h2>
+                        <h2 data-i18n="promptComposition">📝 Composition du prompt</h2>
                         <div class="drop-zone" id="dropZone">
                             <div class="drop-placeholder">
                                 <p>🎯 Glissez et déposez les éléments ici pour composer votre prompt</p>
@@ -171,7 +179,7 @@
 
                     <!-- Section de scoring -->
                     <section class="scoring-section">
-                        <h2>📊 Score du Prompt</h2>
+                        <h2 data-i18n="scoreTitle">📊 Score du Prompt</h2>
                 <div class="score-display">
                     <div class="score-circle">
                         <span id="totalScore">0</span>
@@ -180,28 +188,28 @@
                 </div>
                 <div class="score-details">
                     <div class="score-item">
-                        <span class="score-label">Clarté</span>
+                        <span class="score-label" data-i18n="clarity">Clarté</span>
                         <div class="score-bar">
                             <div class="score-fill" id="clarityScore"></div>
                         </div>
                         <span class="score-value" id="clarityValue">0</span>
                     </div>
                     <div class="score-item">
-                        <span class="score-label">Spécificité</span>
+                        <span class="score-label" data-i18n="specificity">Spécificité</span>
                         <div class="score-bar">
                             <div class="score-fill" id="specificityScore"></div>
                         </div>
                         <span class="score-value" id="specificityValue">0</span>
                     </div>
                     <div class="score-item">
-                        <span class="score-label">Contexte</span>
+                        <span class="score-label" data-i18n="context">Contexte</span>
                         <div class="score-bar">
                             <div class="score-fill" id="contextScore"></div>
                         </div>
                         <span class="score-value" id="contextValue">0</span>
                     </div>
                     <div class="score-item">
-                        <span class="score-label">Structure</span>
+                        <span class="score-label" data-i18n="structure">Structure</span>
                         <div class="score-bar">
                             <div class="score-fill" id="structureScore"></div>
                         </div>
@@ -213,7 +221,7 @@
                     <!-- Section de prévisualisation -->
                     <section class="preview-section">
                         <div class="preview-header">
-                            <h2>👀 Prévisualisation</h2>
+                            <h2 data-i18n="previewTitle">👀 Prévisualisation</h2>
                     <div class="format-tabs">
                         <button class="tab-btn active" data-format="text">Texte</button>
                         <button class="tab-btn" data-format="markdown">Markdown</button>
@@ -227,24 +235,24 @@
 
                     <!-- Section d'export -->
                     <section class="export-section">
-                        <h2>📤 Exporter</h2>
+                        <h2 data-i18n="exportTitle">📤 Exporter</h2>
                 <div class="export-buttons">
-                    <button class="btn btn-secondary" id="copyBtn">
+                    <button class="btn btn-secondary" id="copyBtn" data-i18n="copyBtn">
                         📋 Copier
                     </button>
-                    <button class="btn btn-success" id="saveBtn">
+                    <button class="btn btn-success" id="saveBtn" data-i18n="saveBtn">
                         💾 Sauvegarder
                     </button>
-                    <button class="btn btn-secondary" id="savesBtn">
+                    <button class="btn btn-secondary" id="savesBtn" data-i18n="savesBtn">
                         📂 Mes Sauvegardes
                     </button>
-                    <button class="btn btn-primary" id="exportTxtBtn">
+                    <button class="btn btn-primary" id="exportTxtBtn" data-i18n="exportTxt">
                         📄 Exporter .txt
                     </button>
-                    <button class="btn btn-primary" id="exportMdBtn">
+                    <button class="btn btn-primary" id="exportMdBtn" data-i18n="exportMd">
                         📝 Exporter .md
                     </button>
-                    <button class="btn btn-primary" id="exportXmlBtn">
+                    <button class="btn btn-primary" id="exportXmlBtn" data-i18n="exportXml">
                         📦 Exporter .xml
                     </button>
                         </div>
@@ -253,10 +261,11 @@
             </div>
 
         <footer>
-            <p>Générateur de Prompts IA - Optimisez vos interactions avec l'IA</p>
+            <p data-i18n="footer">Générateur de Prompts IA - Optimisez vos interactions avec l'IA</p>
         </footer>
     </div>
 
+    <script src="language-manager.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

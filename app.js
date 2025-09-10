@@ -18,46 +18,7 @@ class PromptGenerator {
         this.currentFormat = 'text';
         this.promptItems = [];
         
-        this.predefinedRoles = {
-            'expert-dev': 'Expert en développement logiciel avec 10 ans d\'expérience en architecture et bonnes pratiques',
-            'redacteur': 'Rédacteur professionnel spécialisé en contenu marketing et communication digitale',
-            'analyste': 'Analyste de données senior avec expertise en Python, machine learning et visualisation',
-            'designer': 'Designer UX/UI créatif avec expertise en design systems et accessibilité',
-            'marketing': 'Expert marketing digital spécialisé en stratégie de contenu et growth hacking',
-            'consultant': 'Consultant business avec 15 ans d\'expérience en transformation digitale'
-        };
         
-        this.fieldPlaceholders = {
-            role: 'Ex: Expert en développement web...',
-            context: 'Décrivez le contexte ou la situation...',
-            task: 'Décrivez précisément ce que vous attendez...',
-            constraints: 'Limitations, format souhaité, ton...',
-            examples: 'Donnez des exemples de résultats attendus...',
-            format: 'Ex: Liste à puces, tableau, 500 mots, format JSON...',
-            audience: 'Ex: Débutants, experts, grand public, étudiants...',
-            methodology: 'Ex: Méthode SMART, framework Agile, analyse SWOT...',
-            sources: 'Ex: Études récentes, sources académiques, données officielles...',
-            exclusions: 'Ex: Ne pas mentionner X, éviter les sujets Y...',
-            success: 'Ex: Actionnable, mesurable, comprend des métriques...',
-            urgency: 'Ex: Priorité 1: qualité, Priorité 2: rapidité...',
-            tone: 'Ex: Professionnel, décontracté, technique, pédagogique...'
-        };
-
-        this.fieldLabels = {
-            role: '🎭 Rôle / Persona',
-            context: '📋 Contexte',
-            task: '🎯 Tâche principale',
-            constraints: '⚙️ Contraintes & Spécifications',
-            examples: '💡 Exemples',
-            format: '🎨 Format de sortie',
-            audience: '📊 Audience cible',
-            methodology: '🔧 Méthodologie',
-            sources: '📋 Sources & Références',
-            exclusions: '🚫 Exclusions',
-            success: '✅ Critères de succès',
-            urgency: '⏰ Urgence/Priorités',
-            tone: '🎭 Ton & Style'
-        };
 
         this.templates = {
             code: {
@@ -198,7 +159,16 @@ class PromptGenerator {
         this.init();
     }
 
-    init() {
+    async init() {
+        // Initialiser le gestionnaire de langue
+        await languageManager.init();
+        languageManager.attachEventListeners();
+        
+        // S'abonner aux changements de langue
+        languageManager.subscribe((lang, translations) => {
+            this.onLanguageChange(lang, translations);
+        });
+        
         this.attachEventListeners();
         this.setupDragAndDrop();
         this.updatePreview();
@@ -236,6 +206,7 @@ class PromptGenerator {
                 }
             });
         });
+
     }
 
     // Méthodes pour mettre à jour les valeurs des éléments dans la structure
@@ -252,8 +223,9 @@ class PromptGenerator {
         const item = this.promptItems.find(item => item.id == itemId);
         if (item && item.type === 'role') {
             if (selectedValue && selectedValue !== 'custom') {
-                if (this.predefinedRoles[selectedValue]) {
-                    item.value = this.predefinedRoles[selectedValue];
+                const predefinedRoles = languageManager.t('predefinedRoles');
+                if (predefinedRoles[selectedValue]) {
+                    item.value = predefinedRoles[selectedValue];
                     // Mettre à jour aussi l'input text
                     const inputField = document.querySelector(`[data-prompt-id="${itemId}"] input`);
                     if (inputField) inputField.value = item.value;
@@ -312,17 +284,17 @@ class PromptGenerator {
         // Permettre les doublons - créer un nouvel élément vide
         const promptItem = {
             type: fieldType,
-            label: this.fieldLabels[fieldType],
+            label: languageManager.t(`fieldLabels.${fieldType}`),
             value: '', // Commencer avec une valeur vide
             id: Date.now() + Math.random(), // ID unique même pour les doublons
-            placeholder: this.fieldPlaceholders[fieldType]
+            placeholder: languageManager.t(`fieldPlaceholders.${fieldType}`)
         };
 
         this.promptItems.push(promptItem);
         this.renderPromptStructure();
         this.updatePreview();
         this.updateScore();
-        this.showNotification('Élément ajouté au prompt', 'success');
+        languageManager.showNotification(languageManager.t('elementAdded'), 'success');
         
         // Focus sur le nouveau champ
         setTimeout(() => {
@@ -340,17 +312,20 @@ class PromptGenerator {
 
     generateFieldHTML(item) {
         if (item.type === 'role') {
+            const predefinedRoles = languageManager.t('predefinedRoles');
+            const roleOptions = languageManager.t('roleOptions');
+            
             return `
                 <div class="field-input-group">
                     <select class="role-selector" onchange="promptGenerator.updateItemFromSelect('${item.id}', this.value)">
-                        <option value="">Sélectionner un rôle prédéfini...</option>
-                        <option value="expert-dev" ${item.value === this.predefinedRoles['expert-dev'] ? 'selected' : ''}>Expert en développement logiciel</option>
-                        <option value="redacteur" ${item.value === this.predefinedRoles['redacteur'] ? 'selected' : ''}>Rédacteur professionnel</option>
-                        <option value="analyste" ${item.value === this.predefinedRoles['analyste'] ? 'selected' : ''}>Analyste de données</option>
-                        <option value="designer" ${item.value === this.predefinedRoles['designer'] ? 'selected' : ''}>Designer UX/UI</option>
-                        <option value="marketing" ${item.value === this.predefinedRoles['marketing'] ? 'selected' : ''}>Expert marketing</option>
-                        <option value="consultant" ${item.value === this.predefinedRoles['consultant'] ? 'selected' : ''}>Consultant business</option>
-                        <option value="custom">Personnalisé...</option>
+                        <option value="">${roleOptions.selectRole}</option>
+                        <option value="expert-dev" ${item.value === predefinedRoles['expert-dev'] ? 'selected' : ''}>${roleOptions['expert-dev']}</option>
+                        <option value="redacteur" ${item.value === predefinedRoles['redacteur'] ? 'selected' : ''}>${roleOptions['redacteur']}</option>
+                        <option value="analyste" ${item.value === predefinedRoles['analyste'] ? 'selected' : ''}>${roleOptions['analyste']}</option>
+                        <option value="designer" ${item.value === predefinedRoles['designer'] ? 'selected' : ''}>${roleOptions['designer']}</option>
+                        <option value="marketing" ${item.value === predefinedRoles['marketing'] ? 'selected' : ''}>${roleOptions['marketing']}</option>
+                        <option value="consultant" ${item.value === predefinedRoles['consultant'] ? 'selected' : ''}>${roleOptions['consultant']}</option>
+                        <option value="custom">${roleOptions.custom}</option>
                     </select>
                     <input type="text" value="${item.value || ''}" placeholder="${item.placeholder}" 
                            oninput="promptGenerator.updateItemValue('${item.id}', this.value)">
@@ -423,10 +398,10 @@ class PromptGenerator {
     addFieldToPromptWithValue(fieldType, value) {
         const promptItem = {
             type: fieldType,
-            label: this.fieldLabels[fieldType],
+            label: languageManager.t(`fieldLabels.${fieldType}`),
             value: value,
             id: Date.now() + Math.random(),
-            placeholder: this.fieldPlaceholders[fieldType]
+            placeholder: languageManager.t(`fieldPlaceholders.${fieldType}`)
         };
 
         this.promptItems.push(promptItem);
@@ -640,14 +615,14 @@ class PromptGenerator {
         const prompt = this.generatePrompt(this.currentFormat);
         
         if (!prompt) {
-            this.showNotification('Aucun prompt à copier !', 'error');
+            languageManager.showNotification(languageManager.t('noPromptToCopy'), 'error');
             return;
         }
 
         navigator.clipboard.writeText(prompt).then(() => {
-            this.showNotification('Prompt copié dans le presse-papier !', 'success');
+            languageManager.showNotification(languageManager.t('promptCopied'), 'success');
         }).catch(() => {
-            this.showNotification('Erreur lors de la copie', 'error');
+            languageManager.showNotification(languageManager.t('copyError'), 'error');
         });
     }
 
@@ -673,7 +648,7 @@ class PromptGenerator {
         }
         
         if (!content) {
-            this.showNotification('Aucun prompt à exporter !', 'error');
+            languageManager.showNotification(languageManager.t('noPromptToExport'), 'error');
             return;
         }
 
@@ -685,7 +660,7 @@ class PromptGenerator {
         link.click();
         URL.revokeObjectURL(url);
         
-        this.showNotification(`Prompt exporté en ${format.toUpperCase()} !`, 'success');
+        languageManager.showNotification(`${languageManager.t('promptExported')} ${format.toUpperCase()} !`, 'success');
     }
 
     showNotification(message, type = 'info') {
@@ -721,11 +696,11 @@ class PromptGenerator {
     // Méthodes de sauvegarde et chargement
     savePrompt() {
         if (this.promptItems.length === 0) {
-            this.showNotification('Aucun prompt à sauvegarder !', 'error');
+            languageManager.showNotification(languageManager.t('noPromptToSave'), 'error');
             return;
         }
 
-        const promptName = prompt('Nom de la sauvegarde:', `Prompt ${new Date().toLocaleDateString()}`);
+        const promptName = prompt(languageManager.t('saveNamePrompt'), `${languageManager.t('defaultSaveName')} ${new Date().toLocaleDateString()}`);
         if (!promptName) return;
 
         const savedPrompt = {
@@ -740,7 +715,7 @@ class PromptGenerator {
         savedPrompts.push(savedPrompt);
         localStorage.setItem('prompt-generator-saves', JSON.stringify(savedPrompts));
         
-        this.showNotification(`Prompt "${promptName}" sauvegardé !`, 'success');
+        languageManager.showNotification(`${languageManager.t('promptSaved')} "${promptName}"`, 'success');
     }
 
     getSavedPrompts() {
@@ -758,7 +733,7 @@ class PromptGenerator {
             this.updatePreview();
             this.updateScore();
             this.showHomePage();
-            this.showNotification(`Prompt "${prompt.name}" chargé !`, 'success');
+            languageManager.showNotification(`${languageManager.t('promptLoaded')} "${prompt.name}"`, 'success');
         }
     }
 
@@ -770,7 +745,7 @@ class PromptGenerator {
         if (this.currentPage === 'saves') {
             this.showSavesPage();
         }
-        this.showNotification('Prompt supprimé !', 'success');
+        languageManager.showNotification(languageManager.t('promptDeleted'), 'success');
     }
 
     // Navigation entre pages
@@ -802,9 +777,9 @@ class PromptGenerator {
         savesPage.innerHTML = `
             <header class="saves-header">
                 <button class="back-btn" onclick="promptGenerator.showHomePage()">
-                    ← Retour
+                    ${languageManager.t('backBtn')}
                 </button>
-                <h1>📂 Mes Sauvegardes</h1>
+                <h1>${languageManager.t('mySaves')}</h1>
             </header>
             <main class="saves-content">
                 <div id="savesList" class="saves-list"></div>
@@ -821,10 +796,10 @@ class PromptGenerator {
         if (savedPrompts.length === 0) {
             savesList.innerHTML = `
                 <div class="empty-saves">
-                    <p>🗂️ Aucun prompt sauvegardé</p>
-                    <p class="empty-hint">Créez un prompt et sauvegardez-le pour le retrouver ici</p>
+                    <p>${languageManager.t('noSaves')}</p>
+                    <p class="empty-hint">${languageManager.t('noSavesHint')}</p>
                     <button class="btn btn-primary" onclick="promptGenerator.showHomePage()">
-                        Créer un prompt
+                        ${languageManager.t('createPrompt')}
                     </button>
                 </div>
             `;
@@ -835,12 +810,12 @@ class PromptGenerator {
             <div class="save-item">
                 <div class="save-info">
                     <h3>${prompt.name}</h3>
-                    <p class="save-date">Créé le ${new Date(prompt.createdAt).toLocaleString()}</p>
+                    <p class="save-date">${languageManager.t('createdOn')} ${new Date(prompt.createdAt).toLocaleString()}</p>
                     <p class="save-preview">${prompt.previewText}</p>
                 </div>
                 <div class="save-actions">
                     <button class="btn btn-secondary" onclick="promptGenerator.loadSavedPrompt(${prompt.id})">
-                        ✏️ Éditer
+                        ${languageManager.t('editBtn')}
                     </button>
                     <button class="btn btn-secondary" onclick="promptGenerator.exportSavedPrompt(${prompt.id}, 'txt')">
                         📄 .txt
@@ -849,7 +824,7 @@ class PromptGenerator {
                         📝 .md
                     </button>
                     <button class="btn btn-danger" onclick="promptGenerator.deleteSavedPrompt(${prompt.id})">
-                        🗑️
+                        ${languageManager.t('deleteBtn')}
                     </button>
                 </div>
             </div>
@@ -897,7 +872,35 @@ class PromptGenerator {
         link.click();
         URL.revokeObjectURL(url);
         
-        this.showNotification(`"${prompt.name}" exporté en ${format.toUpperCase()} !`, 'success');
+        languageManager.showNotification(`"${prompt.name}" ${languageManager.t('promptExported')} ${format.toUpperCase()} !`, 'success');
+    }
+
+    // Callback pour les changements de langue
+    onLanguageChange(lang, translations) {
+        // Mettre à jour les éléments de prompt existants
+        this.promptItems.forEach(item => {
+            item.label = languageManager.t(`fieldLabels.${item.type}`);
+            item.placeholder = languageManager.t(`fieldPlaceholders.${item.type}`);
+        });
+        
+        // Re-render la structure si nécessaire
+        if (this.promptItems.length > 0) {
+            this.renderPromptStructure();
+        }
+        
+        // Re-render la page des sauvegardes si elle est active
+        if (this.currentPage === 'saves') {
+            const savesList = document.getElementById('savesList');
+            if (savesList) {
+                this.renderSavesPage();
+            }
+        }
+        
+        // Mettre à jour le preview vide si visible
+        const emptyState = document.querySelector('.preview-content .empty-state');
+        if (emptyState) {
+            emptyState.textContent = translations.emptyPreview;
+        }
     }
 }
 
