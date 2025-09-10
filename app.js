@@ -194,6 +194,7 @@ class PromptGenerator {
             }
         };
 
+        this.currentPage = 'home';
         this.init();
     }
 
@@ -218,8 +219,10 @@ class PromptGenerator {
             });
         });
 
-        // Boutons d'export
+        // Boutons d'export et sauvegarde
         document.getElementById('copyBtn').addEventListener('click', () => this.copyToClipboard());
+        document.getElementById('saveBtn').addEventListener('click', () => this.savePrompt());
+        document.getElementById('savesBtn').addEventListener('click', () => this.showSavesPage());
         document.getElementById('exportTxtBtn').addEventListener('click', () => this.exportAs('txt'));
         document.getElementById('exportMdBtn').addEventListener('click', () => this.exportAs('md'));
         document.getElementById('exportXmlBtn').addEventListener('click', () => this.exportAs('xml'));
@@ -713,6 +716,188 @@ class PromptGenerator {
             notification.style.animation = 'slideOutRight 0.3s ease';
             setTimeout(() => notification.remove(), 300);
         }, 3000);
+    }
+
+    // Méthodes de sauvegarde et chargement
+    savePrompt() {
+        if (this.promptItems.length === 0) {
+            this.showNotification('Aucun prompt à sauvegarder !', 'error');
+            return;
+        }
+
+        const promptName = prompt('Nom de la sauvegarde:', `Prompt ${new Date().toLocaleDateString()}`);
+        if (!promptName) return;
+
+        const savedPrompt = {
+            id: Date.now(),
+            name: promptName,
+            items: this.promptItems,
+            createdAt: new Date().toISOString(),
+            previewText: this.generatePrompt('text').substring(0, 150) + '...'
+        };
+
+        const savedPrompts = this.getSavedPrompts();
+        savedPrompts.push(savedPrompt);
+        localStorage.setItem('prompt-generator-saves', JSON.stringify(savedPrompts));
+        
+        this.showNotification(`Prompt "${promptName}" sauvegardé !`, 'success');
+    }
+
+    getSavedPrompts() {
+        const saved = localStorage.getItem('prompt-generator-saves');
+        return saved ? JSON.parse(saved) : [];
+    }
+
+    loadSavedPrompt(promptId) {
+        const savedPrompts = this.getSavedPrompts();
+        const prompt = savedPrompts.find(p => p.id === promptId);
+        
+        if (prompt) {
+            this.promptItems = prompt.items;
+            this.renderPromptStructure();
+            this.updatePreview();
+            this.updateScore();
+            this.showHomePage();
+            this.showNotification(`Prompt "${prompt.name}" chargé !`, 'success');
+        }
+    }
+
+    deleteSavedPrompt(promptId) {
+        const savedPrompts = this.getSavedPrompts();
+        const updatedPrompts = savedPrompts.filter(p => p.id !== promptId);
+        localStorage.setItem('prompt-generator-saves', JSON.stringify(updatedPrompts));
+        
+        if (this.currentPage === 'saves') {
+            this.showSavesPage();
+        }
+        this.showNotification('Prompt supprimé !', 'success');
+    }
+
+    // Navigation entre pages
+    showHomePage() {
+        this.currentPage = 'home';
+        document.querySelector('.app-layout').style.display = 'flex';
+        const savesPage = document.getElementById('savesPage');
+        if (savesPage) savesPage.style.display = 'none';
+    }
+
+    showSavesPage() {
+        this.currentPage = 'saves';
+        document.querySelector('.app-layout').style.display = 'none';
+        
+        let savesPage = document.getElementById('savesPage');
+        if (!savesPage) {
+            this.createSavesPage();
+            savesPage = document.getElementById('savesPage');
+        }
+        
+        this.renderSavesPage();
+        savesPage.style.display = 'block';
+    }
+
+    createSavesPage() {
+        const savesPage = document.createElement('div');
+        savesPage.id = 'savesPage';
+        savesPage.className = 'saves-page';
+        savesPage.innerHTML = `
+            <header class="saves-header">
+                <button class="back-btn" onclick="promptGenerator.showHomePage()">
+                    ← Retour
+                </button>
+                <h1>📂 Mes Sauvegardes</h1>
+            </header>
+            <main class="saves-content">
+                <div id="savesList" class="saves-list"></div>
+            </main>
+        `;
+        
+        document.querySelector('.container').appendChild(savesPage);
+    }
+
+    renderSavesPage() {
+        const savesList = document.getElementById('savesList');
+        const savedPrompts = this.getSavedPrompts();
+        
+        if (savedPrompts.length === 0) {
+            savesList.innerHTML = `
+                <div class="empty-saves">
+                    <p>🗂️ Aucun prompt sauvegardé</p>
+                    <p class="empty-hint">Créez un prompt et sauvegardez-le pour le retrouver ici</p>
+                    <button class="btn btn-primary" onclick="promptGenerator.showHomePage()">
+                        Créer un prompt
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        savesList.innerHTML = savedPrompts.map(prompt => `
+            <div class="save-item">
+                <div class="save-info">
+                    <h3>${prompt.name}</h3>
+                    <p class="save-date">Créé le ${new Date(prompt.createdAt).toLocaleString()}</p>
+                    <p class="save-preview">${prompt.previewText}</p>
+                </div>
+                <div class="save-actions">
+                    <button class="btn btn-secondary" onclick="promptGenerator.loadSavedPrompt(${prompt.id})">
+                        ✏️ Éditer
+                    </button>
+                    <button class="btn btn-secondary" onclick="promptGenerator.exportSavedPrompt(${prompt.id}, 'txt')">
+                        📄 .txt
+                    </button>
+                    <button class="btn btn-secondary" onclick="promptGenerator.exportSavedPrompt(${prompt.id}, 'md')">
+                        📝 .md
+                    </button>
+                    <button class="btn btn-danger" onclick="promptGenerator.deleteSavedPrompt(${prompt.id})">
+                        🗑️
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    exportSavedPrompt(promptId, format) {
+        const savedPrompts = this.getSavedPrompts();
+        const prompt = savedPrompts.find(p => p.id === promptId);
+        
+        if (!prompt) return;
+
+        // Temporairement charger le prompt pour l'export
+        const currentItems = this.promptItems;
+        this.promptItems = prompt.items;
+        
+        let content, filename, mimeType;
+        
+        switch (format) {
+            case 'txt':
+                content = this.generatePrompt('text');
+                filename = `${prompt.name}.txt`;
+                mimeType = 'text/plain';
+                break;
+            case 'md':
+                content = this.generatePrompt('markdown');
+                filename = `${prompt.name}.md`;
+                mimeType = 'text/markdown';
+                break;
+            case 'xml':
+                content = this.generatePrompt('xml');
+                filename = `${prompt.name}.xml`;
+                mimeType = 'application/xml';
+                break;
+        }
+
+        // Restaurer l'état précédent
+        this.promptItems = currentItems;
+
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(url);
+        
+        this.showNotification(`"${prompt.name}" exporté en ${format.toUpperCase()} !`, 'success');
     }
 }
 
