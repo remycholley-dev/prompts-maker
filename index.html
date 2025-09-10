@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur de Prompts IA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Générateur de Prompts IA</h1>
+            <p class="subtitle">Créez des prompts efficaces avec scoring en temps réel</p>
+        </header>
+
+        <main>
+            <!-- Section de composition du prompt -->
+            <section class="prompt-builder">
+                <div class="input-group">
+                    <label for="role">Rôle / Persona</label>
+                    <input type="text" id="role" placeholder="Ex: Expert en développement web...">
+                    <span class="hint">Définissez le rôle ou l'expertise de l'IA</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="context">Contexte</label>
+                    <textarea id="context" rows="3" placeholder="Décrivez le contexte ou la situation..."></textarea>
+                    <span class="hint">Fournissez le contexte nécessaire</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="task">Tâche principale</label>
+                    <textarea id="task" rows="4" placeholder="Décrivez précisément ce que vous attendez..."></textarea>
+                    <span class="hint">Soyez spécifique sur l'objectif à atteindre</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="constraints">Contraintes & Spécifications</label>
+                    <textarea id="constraints" rows="3" placeholder="Limitations, format souhaité, ton..."></textarea>
+                    <span class="hint">Précisez les contraintes et le format de sortie</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="examples">Exemples (optionnel)</label>
+                    <textarea id="examples" rows="3" placeholder="Donnez des exemples de résultats attendus..."></textarea>
+                    <span class="hint">Les exemples améliorent la précision</span>
+                </div>
+            </section>
+
+            <!-- Section de scoring -->
+            <section class="scoring-section">
+                <h2>Score du Prompt</h2>
+                <div class="score-display">
+                    <div class="score-circle">
+                        <span id="totalScore">0</span>
+                        <span class="score-max">/100</span>
+                    </div>
+                </div>
+                <div class="score-details">
+                    <div class="score-item">
+                        <span class="score-label">Clarté</span>
+                        <div class="score-bar">
+                            <div class="score-fill" id="clarityScore"></div>
+                        </div>
+                        <span class="score-value" id="clarityValue">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Spécificité</span>
+                        <div class="score-bar">
+                            <div class="score-fill" id="specificityScore"></div>
+                        </div>
+                        <span class="score-value" id="specificityValue">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Contexte</span>
+                        <div class="score-bar">
+                            <div class="score-fill" id="contextScore"></div>
+                        </div>
+                        <span class="score-value" id="contextValue">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Structure</span>
+                        <div class="score-bar">
+                            <div class="score-fill" id="structureScore"></div>
+                        </div>
+                        <span class="score-value" id="structureValue">0</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section de prévisualisation -->
+            <section class="preview-section">
+                <div class="preview-header">
+                    <h2>Prévisualisation</h2>
+                    <div class="format-tabs">
+                        <button class="tab-btn active" data-format="text">Texte</button>
+                        <button class="tab-btn" data-format="markdown">Markdown</button>
+                        <button class="tab-btn" data-format="xml">XML</button>
+                    </div>
+                </div>
+                <div class="preview-content" id="previewContent">
+                    <p class="empty-state">Commencez à remplir les champs pour voir votre prompt...</p>
+                </div>
+            </section>
+
+            <!-- Section d'export -->
+            <section class="export-section">
+                <h2>Exporter</h2>
+                <div class="export-buttons">
+                    <button class="btn btn-secondary" id="copyBtn">
+                        📋 Copier
+                    </button>
+                    <button class="btn btn-primary" id="exportTxtBtn">
+                        📄 Exporter .txt
+                    </button>
+                    <button class="btn btn-primary" id="exportMdBtn">
+                        📝 Exporter .md
+                    </button>
+                    <button class="btn btn-primary" id="exportXmlBtn">
+                        📦 Exporter .xml
+                    </button>
+                </div>
+            </section>
+
+            <!-- Templates prédéfinis -->
+            <section class="templates-section">
+                <h2>Templates rapides</h2>
+                <div class="templates-grid">
+                    <button class="template-btn" data-template="code">
+                        💻 Code & Développement
+                    </button>
+                    <button class="template-btn" data-template="writing">
+                        ✍️ Rédaction & Contenu
+                    </button>
+                    <button class="template-btn" data-template="analysis">
+                        📊 Analyse & Données
+                    </button>
+                    <button class="template-btn" data-template="creative">
+                        🎨 Créatif & Design
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Générateur de Prompts IA - Optimisez vos interactions avec l'IA</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
