@@ -2,6 +2,9 @@
 
 > Fichier `.md` décrivant la création d'une application web pour composer des prompts, calculer un score (role, tâche, clarté, sécurité...), prévisualiser et exporter aux formats `.txt`, `.xml` et `.md`.
 
+# Demo
+demo : [https://remycholley-dev.github.io/prompts-maker/](https://remycholley-dev.github.io/prompts-maker/)
+
 ---
 
 ## 1. Objectif
