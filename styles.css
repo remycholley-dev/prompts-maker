@@ -142,31 +142,8 @@ main {
     margin: 0;
 }
 
-.field-content {
+.field-description {
     padding: 0.75rem 1rem;
-}
-
-.field-content input,
-.field-content textarea,
-.field-content select {
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    transition: border-color 0.2s;
-}
-
-.field-content input:focus,
-.field-content textarea:focus,
-.field-content select:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-.role-selector {
-    margin-bottom: 0.5rem;
 }
 
 .hint {
@@ -307,6 +284,40 @@ main {
     color: var(--dark);
     line-height: 1.5;
     white-space: pre-wrap;
+}
+
+.prompt-item-content-editable {
+    padding: 1rem;
+}
+
+.field-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.field-input-group input,
+.field-input-group textarea,
+.field-input-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+
+.field-input-group input:focus,
+.field-input-group textarea:focus,
+.field-input-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.field-input-group .role-selector {
+    margin-bottom: 0.25rem;
 }
 
 /* Templates dans le sidebar */

@@ -1,12 +1,6 @@
 class PromptGenerator {
     constructor() {
         this.elements = {
-            role: document.getElementById('role'),
-            roleSelect: document.getElementById('roleSelect'),
-            context: document.getElementById('context'),
-            task: document.getElementById('task'),
-            constraints: document.getElementById('constraints'),
-            examples: document.getElementById('examples'),
             previewContent: document.getElementById('previewContent'),
             dropZone: document.getElementById('dropZone'),
             promptStructure: document.getElementById('promptStructure'),
@@ -23,6 +17,7 @@ class PromptGenerator {
 
         this.currentFormat = 'text';
         this.promptItems = [];
+        
         this.predefinedRoles = {
             'expert-dev': 'Expert en développement logiciel avec 10 ans d\'expérience en architecture et bonnes pratiques',
             'redacteur': 'Rédacteur professionnel spécialisé en contenu marketing et communication digitale',
@@ -30,6 +25,14 @@ class PromptGenerator {
             'designer': 'Designer UX/UI créatif avec expertise en design systems et accessibilité',
             'marketing': 'Expert marketing digital spécialisé en stratégie de contenu et growth hacking',
             'consultant': 'Consultant business avec 15 ans d\'expérience en transformation digitale'
+        };
+        
+        this.fieldPlaceholders = {
+            role: 'Ex: Expert en développement web...',
+            context: 'Décrivez le contexte ou la situation...',
+            task: 'Décrivez précisément ce que vous attendez...',
+            constraints: 'Limitations, format souhaité, ton...',
+            examples: 'Donnez des exemples de résultats attendus...'
         };
 
         this.fieldLabels = {
@@ -77,25 +80,13 @@ class PromptGenerator {
     init() {
         this.attachEventListeners();
         this.setupDragAndDrop();
-        this.setupRoleSelector();
         this.updatePreview();
         this.updateScore();
     }
 
     attachEventListeners() {
-        // Mise à jour en temps réel pour les éléments dans la structure uniquement
-        Object.values(this.elements).forEach(element => {
-            if (element && (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA')) {
-                element.addEventListener('input', () => {
-                    // Seulement mettre à jour si on a des éléments dans la structure
-                    if (this.promptItems.length > 0) {
-                        this.updatePromptStructure();
-                        this.updatePreview();
-                        this.updateScore();
-                    }
-                });
-            }
-        });
+        // Les event listeners pour les champs sont maintenant gérés dynamiquement
+        // dans renderPromptStructure via les attributs onclick et oninput
 
         // Tabs de format
         document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -124,24 +115,37 @@ class PromptGenerator {
         });
     }
 
-    setupRoleSelector() {
-        this.elements.roleSelect.addEventListener('change', (e) => {
-            const selectedValue = e.target.value;
+    // Méthodes pour mettre à jour les valeurs des éléments dans la structure
+    updateItemValue(itemId, value) {
+        const item = this.promptItems.find(item => item.id == itemId);
+        if (item) {
+            item.value = value;
+            this.updatePreview();
+            this.updateScore();
+        }
+    }
+    
+    updateItemFromSelect(itemId, selectedValue) {
+        const item = this.promptItems.find(item => item.id == itemId);
+        if (item && item.type === 'role') {
             if (selectedValue && selectedValue !== 'custom') {
                 if (this.predefinedRoles[selectedValue]) {
-                    this.elements.role.value = this.predefinedRoles[selectedValue];
+                    item.value = this.predefinedRoles[selectedValue];
+                    // Mettre à jour aussi l'input text
+                    const inputField = document.querySelector(`[data-prompt-id="${itemId}"] input`);
+                    if (inputField) inputField.value = item.value;
                 }
             } else if (selectedValue === 'custom') {
-                this.elements.role.value = '';
-                this.elements.role.focus();
+                item.value = '';
+                const inputField = document.querySelector(`[data-prompt-id="${itemId}"] input`);
+                if (inputField) {
+                    inputField.value = '';
+                    inputField.focus();
+                }
             }
-            // Seulement mettre à jour si le rôle est dans la structure
-            if (this.promptItems.find(item => item.type === 'role')) {
-                this.updatePromptStructure();
-                this.updatePreview();
-                this.updateScore();
-            }
-        });
+            this.updatePreview();
+            this.updateScore();
+        }
     }
 
     setupDragAndDrop() {
@@ -182,37 +186,60 @@ class PromptGenerator {
     }
 
     addFieldToPrompt(fieldType) {
-        // Éviter les doublons
-        if (this.promptItems.find(item => item.type === fieldType)) {
-            this.showNotification('Ce champ est déjà dans le prompt', 'warning');
-            return;
-        }
-
-        const fieldValue = this.elements[fieldType]?.value.trim();
-        if (!fieldValue) {
-            this.showNotification('Le champ est vide', 'warning');
-            return;
-        }
-
+        // Permettre les doublons - créer un nouvel élément vide
         const promptItem = {
             type: fieldType,
             label: this.fieldLabels[fieldType],
-            value: fieldValue,
-            id: Date.now()
+            value: '', // Commencer avec une valeur vide
+            id: Date.now() + Math.random(), // ID unique même pour les doublons
+            placeholder: this.fieldPlaceholders[fieldType]
         };
 
         this.promptItems.push(promptItem);
         this.renderPromptStructure();
         this.updatePreview();
         this.updateScore();
-        this.showNotification('Champ ajouté au prompt', 'success');
+        this.showNotification('Élément ajouté au prompt', 'success');
+        
+        // Focus sur le nouveau champ
+        setTimeout(() => {
+            const newField = document.querySelector(`[data-prompt-id="${promptItem.id}"] input, [data-prompt-id="${promptItem.id}"] textarea, [data-prompt-id="${promptItem.id}"] select`);
+            if (newField) newField.focus();
+        }, 100);
     }
 
     removeFieldFromPrompt(itemId) {
-        this.promptItems = this.promptItems.filter(item => item.id !== itemId);
+        this.promptItems = this.promptItems.filter(item => item.id != itemId);
         this.renderPromptStructure();
         this.updatePreview();
         this.updateScore();
+    }
+
+    generateFieldHTML(item) {
+        if (item.type === 'role') {
+            return `
+                <div class="field-input-group">
+                    <select class="role-selector" onchange="promptGenerator.updateItemFromSelect('${item.id}', this.value)">
+                        <option value="">Sélectionner un rôle prédéfini...</option>
+                        <option value="expert-dev" ${item.value === this.predefinedRoles['expert-dev'] ? 'selected' : ''}>Expert en développement logiciel</option>
+                        <option value="redacteur" ${item.value === this.predefinedRoles['redacteur'] ? 'selected' : ''}>Rédacteur professionnel</option>
+                        <option value="analyste" ${item.value === this.predefinedRoles['analyste'] ? 'selected' : ''}>Analyste de données</option>
+                        <option value="designer" ${item.value === this.predefinedRoles['designer'] ? 'selected' : ''}>Designer UX/UI</option>
+                        <option value="marketing" ${item.value === this.predefinedRoles['marketing'] ? 'selected' : ''}>Expert marketing</option>
+                        <option value="consultant" ${item.value === this.predefinedRoles['consultant'] ? 'selected' : ''}>Consultant business</option>
+                        <option value="custom">Personnalisé...</option>
+                    </select>
+                    <input type="text" value="${item.value || ''}" placeholder="${item.placeholder}" 
+                           oninput="promptGenerator.updateItemValue('${item.id}', this.value)">
+                </div>`;
+        } else {
+            const rows = item.type === 'task' ? 4 : 3;
+            return `
+                <div class="field-input-group">
+                    <textarea rows="${rows}" placeholder="${item.placeholder}" 
+                              oninput="promptGenerator.updateItemValue('${item.id}', this.value)">${item.value || ''}</textarea>
+                </div>`;
+        }
     }
 
     renderPromptStructure() {
@@ -226,16 +253,18 @@ class PromptGenerator {
 
         structure.className = 'prompt-structure has-items';
         structure.innerHTML = this.promptItems.map(item => `
-            <div class="prompt-item" data-id="${item.id}">
+            <div class="prompt-item" data-id="${item.id}" data-prompt-id="${item.id}">
                 <div class="prompt-item-header">
                     <span class="prompt-item-title">${item.label}</span>
                     <div class="prompt-item-actions">
-                        <button class="remove-btn" onclick="promptGenerator.removeFieldFromPrompt(${item.id})">
+                        <button class="remove-btn" onclick="promptGenerator.removeFieldFromPrompt('${item.id}')">
                             ✕
                         </button>
                     </div>
                 </div>
-                <div class="prompt-item-content">${item.value}</div>
+                <div class="prompt-item-content-editable">
+                    ${this.generateFieldHTML(item)}
+                </div>
             </div>
         `).join('') + `
             <div class="drop-placeholder-bottom">
@@ -245,44 +274,50 @@ class PromptGenerator {
     }
 
     updatePromptStructure() {
-        // Mettre à jour les valeurs dans la structure existante
-        let hasChanged = false;
-        this.promptItems.forEach(item => {
-            const currentValue = this.elements[item.type]?.value.trim() || '';
-            if (currentValue !== item.value) {
-                item.value = currentValue;
-                hasChanged = true;
-            }
-        });
-        
-        if (hasChanged && this.promptItems.length > 0) {
-            this.renderPromptStructure();
-        }
+        // Cette fonction n'est plus nécessaire car les valeurs sont mises à jour directement
+        // via updateItemValue() lors des changements d'input
     }
 
     applyTemplate(template) {
-        this.elements.role.value = template.role;
-        this.elements.context.value = template.context;
-        this.elements.task.value = template.task;
-        this.elements.constraints.value = template.constraints;
-        this.elements.examples.value = template.examples;
+        // Les templates n'ont plus d'effet car il n'y a plus de champs fixes
+        // On peut les utiliser pour créer des structures prédéfinies
+        this.promptItems = [];
         
-        // Les templates ne mettent à jour la preview/score que si des éléments sont droppés
-        if (this.promptItems.length > 0) {
-            this.updatePromptStructure();
-            this.updatePreview();
-            this.updateScore();
+        if (template.role) {
+            this.addFieldToPromptWithValue('role', template.role);
         }
+        if (template.context) {
+            this.addFieldToPromptWithValue('context', template.context);
+        }
+        if (template.task) {
+            this.addFieldToPromptWithValue('task', template.task);
+        }
+        if (template.constraints) {
+            this.addFieldToPromptWithValue('constraints', template.constraints);
+        }
+        if (template.examples) {
+            this.addFieldToPromptWithValue('examples', template.examples);
+        }
+    }
+    
+    addFieldToPromptWithValue(fieldType, value) {
+        const promptItem = {
+            type: fieldType,
+            label: this.fieldLabels[fieldType],
+            value: value,
+            id: Date.now() + Math.random(),
+            placeholder: this.fieldPlaceholders[fieldType]
+        };
+
+        this.promptItems.push(promptItem);
+        this.renderPromptStructure();
+        this.updatePreview();
+        this.updateScore();
     }
 
     getPromptData() {
-        return {
-            role: this.elements.role.value.trim(),
-            context: this.elements.context.value.trim(),
-            task: this.elements.task.value.trim(),
-            constraints: this.elements.constraints.value.trim(),
-            examples: this.elements.examples.value.trim()
-        };
+        // Cette fonction n'est plus utilisée car on utilise directement promptItems
+        return {};
     }
 
     generatePrompt(format = 'text') {
@@ -327,77 +362,18 @@ class PromptGenerator {
     }
 
     generateTextPrompt(data) {
-        let prompt = '';
-        
-        if (data.role) {
-            prompt += `Rôle: ${data.role}\n\n`;
-        }
-        
-        if (data.context) {
-            prompt += `Contexte: ${data.context}\n\n`;
-        }
-        
-        prompt += `Tâche: ${data.task}\n\n`;
-        
-        if (data.constraints) {
-            prompt += `Contraintes: ${data.constraints}\n\n`;
-        }
-        
-        if (data.examples) {
-            prompt += `Exemples: ${data.examples}`;
-        }
-        
-        return prompt.trim();
+        // Ancienne méthode - plus utilisée
+        return '';
     }
 
     generateMarkdownPrompt(data) {
-        let prompt = '# Prompt IA\n\n';
-        
-        if (data.role) {
-            prompt += `## 🎭 Rôle\n${data.role}\n\n`;
-        }
-        
-        if (data.context) {
-            prompt += `## 📋 Contexte\n${data.context}\n\n`;
-        }
-        
-        prompt += `## 🎯 Tâche\n${data.task}\n\n`;
-        
-        if (data.constraints) {
-            prompt += `## ⚙️ Contraintes\n${data.constraints}\n\n`;
-        }
-        
-        if (data.examples) {
-            prompt += `## 💡 Exemples\n${data.examples}`;
-        }
-        
-        return prompt.trim();
+        // Ancienne méthode - plus utilisée
+        return '';
     }
 
     generateXmlPrompt(data) {
-        let prompt = '<?xml version="1.0" encoding="UTF-8"?>\n<prompt>\n';
-        
-        if (data.role) {
-            prompt += `  <role>${this.escapeXml(data.role)}</role>\n`;
-        }
-        
-        if (data.context) {
-            prompt += `  <context>${this.escapeXml(data.context)}</context>\n`;
-        }
-        
-        prompt += `  <task>${this.escapeXml(data.task)}</task>\n`;
-        
-        if (data.constraints) {
-            prompt += `  <constraints>${this.escapeXml(data.constraints)}</constraints>\n`;
-        }
-        
-        if (data.examples) {
-            prompt += `  <examples>${this.escapeXml(data.examples)}</examples>\n`;
-        }
-        
-        prompt += '</prompt>';
-        
-        return prompt;
+        // Ancienne méthode - plus utilisée
+        return '';
     }
 
     escapeXml(text) {
